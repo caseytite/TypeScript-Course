@@ -6,13 +6,19 @@ function Logger(logString: string) {
 }
 
 function withTemplate(template: string, hookId: string) {
-  return function (constructor: any) {
-    const p = new constructor();
-    const hookEl = document.getElementById(hookId);
-    if (hookEl) {
-      hookEl.innerHTML = template;
-      hookEl.querySelector("h1")!.textContent = p.name;
-    }
+  return function <T extends { new (...args: any[]): { name: string } }>(
+    originalConstructor: T
+  ) {
+    return class extends originalConstructor {
+      constructor(..._: any[]) {
+        super();
+        const hookEl = document.getElementById(hookId);
+        if (hookEl) {
+          hookEl.innerHTML = template;
+          hookEl.querySelector("h1")!.textContent = this.name;
+        }
+      }
+    };
   };
 }
 
@@ -55,6 +61,13 @@ function Log3(
   console.log(description);
 }
 
+function Log4(target: any, name: string | symbol, index: number) {
+  console.log("Parameter decorator");
+  console.log(target);
+  console.log(name);
+  console.log(index);
+}
+
 class Product {
   @Log
   title: string;
@@ -69,7 +82,7 @@ class Product {
     this._price = p;
   }
   @Log3
-  getPriceWithTax(tax: number) {
+  getPriceWithTax(@Log4 tax: number) {
     return this._price * (1 + tax);
   }
 }
