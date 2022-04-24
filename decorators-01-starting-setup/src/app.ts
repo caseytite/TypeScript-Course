@@ -86,3 +86,31 @@ class Product {
     return this._price * (1 + tax);
   }
 }
+
+function AutoBind(_: any, __: string, description: PropertyDescriptor) {
+  const originalMethod = description.value;
+  const adjDescriptor: PropertyDescriptor = {
+    configurable: true,
+    enumerable: false,
+    get() {
+      const boundFn = originalMethod.bind(this);
+      return boundFn;
+    },
+  };
+  return adjDescriptor;
+}
+
+class Printer {
+  message = "clicked!";
+
+  @AutoBind
+  showMessage() {
+    console.log(this.message);
+  }
+}
+
+const firstPrinter = new Printer();
+
+const button = document.querySelector("button")!;
+// button.addEventListener("click", firstPrinter.showMessage.bind(firstPrinter));
+button.addEventListener("click", firstPrinter.showMessage);
