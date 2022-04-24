@@ -114,3 +114,74 @@ const firstPrinter = new Printer();
 const button = document.querySelector("button")!;
 // button.addEventListener("click", firstPrinter.showMessage.bind(firstPrinter));
 button.addEventListener("click", firstPrinter.showMessage);
+
+interface ValidatorConfig {
+  [property: string]: {
+    [validatableProp: string]: string[];
+  };
+}
+
+const registerdValidators: ValidatorConfig = {};
+
+function Required(target: any, propName: string) {
+  registerdValidators[target.constructor.name] = {
+    ...registerdValidators[target.constructor.name],
+    [propName]: ["required"],
+  };
+}
+function PositiveNumber(target: any, propName: string) {
+  registerdValidators[target.constructor.name] = {
+    ...registerdValidators[target.constructor.name],
+    [propName]: ["positve"],
+  };
+}
+function validate(obj: any) {
+  const objValidatorConfig = registerdValidators[obj.constructor.name];
+  if (!objValidatorConfig) {
+    return true;
+  }
+  let isValidated = true;
+  for (const prop in objValidatorConfig) {
+    for (const validator of objValidatorConfig[prop]) {
+      switch (validator) {
+        case "required":
+          isValidated = isValidated && !!obj[prop];
+          break;
+        case "positve":
+          isValidated = isValidated && obj[prop] > 0;
+          break;
+      }
+    }
+  }
+  return isValidated;
+}
+
+class Course {
+  @Required
+  title: string;
+  @PositiveNumber
+  price: number;
+  constructor(t: string, p: number) {
+    this.title = t;
+    this.price = p;
+  }
+}
+
+const courseForm = document.querySelector("form")!;
+courseForm.addEventListener("submit", (e) => {
+  e.preventDefault();
+
+  const titleEl = document.getElementById("title") as HTMLInputElement;
+  const priceEl = document.getElementById("price") as HTMLInputElement;
+
+  const title = titleEl.value;
+  const price = +priceEl.value;
+  const createdCourse = new Course(title, price);
+
+  if (!validate(createdCourse)) {
+    alert("invalid input");
+    return;
+  }
+
+  console.log(createdCourse);
+});
