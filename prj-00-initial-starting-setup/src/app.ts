@@ -66,7 +66,7 @@ class ProjectState extends State<Project> {
 
   moveProject(projectID: string, newStatus: ProjectStatus) {
     const project = this.projects.find((prj) => prj.id === projectID);
-    if (project) {
+    if (project && project.status !== newStatus) {
       project.status = newStatus;
       this.updateListeners();
     }
