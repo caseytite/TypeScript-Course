@@ -1,12 +1,9 @@
 import React from "react";
-
-interface TodoListProps {
-  todoItems: { id: number; task: string }[];
-}
+import { TodoListProps } from "../models/todo.model";
 
 const TodoList: React.FC<TodoListProps> = ({ todoItems }) => {
   const todoList = todoItems.map((todo) => <li key={todo.id}>{todo.task}</li>);
-  return <ul>{todoList}</ul>;
+  return <ol>{todoList}</ol>;
 };
 
 export default TodoList;
