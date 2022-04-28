@@ -5,6 +5,7 @@ export interface Todo {
 
 export interface TodoListProps {
   todoItems: { id: number; task: string }[];
+  handleDelete: (id: number) => void;
 }
 
 //how to do this with a type rather then an interface
