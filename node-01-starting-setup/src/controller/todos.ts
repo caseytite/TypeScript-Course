@@ -1,7 +1,7 @@
 import { RequestHandler } from "express";
 import { Todo } from "../models/todo";
 
-let TODOS: Todo[] = [];
+const TODOS: Todo[] = [];
 
 export const createTodo: RequestHandler = (req, res, next) => {
   const text = (req.body as { text: string }).text;
